@@ -1,0 +1,68 @@
+{
+    "port": 8080,
+    "deposits": [
+        {
+            "customer": "Ali Alavi",
+            "id": "325648",
+            "initialBalance": "1000",
+            "upperBound": "10000000"
+        },
+        {
+            "customer": "Mohammad Mohammady",
+            "id": "5628952",
+            "initialBalance": "0",
+            "upperBound": "0"
+        },
+        {
+            "customer": "Ali Mohammady",
+            "id": "2545",
+            "initialBalance": "1000",
+            "upperBound": "10000000"
+        },
+        {
+            "customer": "Ladan Ahmadiniya",
+            "id": "4595",
+            "initialBalance": "0",
+            "upperBound": "0"
+        },
+        {
+            "customer": "Mina Alavi",
+            "id": "65658",
+            "initialBalance": "100",
+            "upperBound": "1000"
+        },
+        {
+            "customer": "Sara Mohammady",
+            "id": "5652",
+            "initialBalance": "1200000000",
+            "upperBound": "500000"
+        },
+        {
+            "customer": "Sina Alavi",
+            "id": "325648",
+            "initialBalance": "1000",
+            "upperBound": "10000000"
+        },
+        {
+            "customer": "Sina Naha",
+            "id": "9856",
+            "initialBalance": "12000",
+            "upperBound": "5450"
+        },
+        {
+            "customer": "Somayeh Ahmadi",
+            "id": "7895",
+            "initialBalance": "1000",
+            "upperBound": "200000"
+        },
+        {
+            "customer": "Nooshin Hoshyar",
+            "id": "6656",
+            "initialBalance": "0",
+            "upperBound": "0"
+        }
+
+
+    ],
+    "outLog": "server.out"
+}

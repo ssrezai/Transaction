@@ -1,0 +1,11 @@
+<terminal id="" type="">
+    <server ip="" port=""/>
+    <outLog path=""/>
+    <transactions>
+        <transaction id="1" type="deposit" amount="56655" deposit="1"/>
+        <transaction id="21" type="deposit" amount="9568895000" deposit="2"/>
+        <transaction id="11" type="withdraw" amount="200000" deposit="3"/>
+        <transaction id="10" type="withdraw" amount="25" deposit="4"/>
+        <transaction id="2" type="deposit" amount="100000000" deposit="5"/>
+    </transactions>
+</terminal>
