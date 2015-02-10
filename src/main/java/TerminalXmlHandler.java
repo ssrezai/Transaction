@@ -14,6 +14,16 @@ public class TerminalXmlHandler extends DefaultHandler {
     private int port;
     private String TerminalLogFile;
 
+    public String getTerminalName() {
+        return terminalName;
+    }
+
+    public void setTerminalName(String terminalName) {
+        this.terminalName = terminalName;
+    }
+
+    private  String terminalName;
+
     public ArrayList<Transaction> getTransactionsList() {
         return transactionsList;
     }
@@ -57,6 +67,14 @@ public class TerminalXmlHandler extends DefaultHandler {
             transaction.setDepositId(attributes.getValue("deposit"));
             transactionsList.add(transaction);
 
+        }
+        else if(qName.equalsIgnoreCase("outLog"))
+        {
+            this.setTerminalLogFile(attributes.getValue("path"));
+        }
+        else if (qName.equalsIgnoreCase("terminal"))
+        {
+            this.setTerminalName(attributes.getValue("type")+"_"+attributes.getValue("id"));
         }
     }
 

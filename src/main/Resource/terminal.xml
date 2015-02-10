@@ -1,6 +1,6 @@
-<terminal id="" type="">
-    <server ip="" port=""/>
-    <outLog path=""/>
+<terminal id="123" type="ATM">
+    <server ip="192.168.4.25" port="8080"/>
+    <outLog path="terminal123.log"/>
     <transactions>
         <transaction id="1" type="deposit" amount="56655" deposit="1"/>
         <transaction id="21" type="deposit" amount="9568895000" deposit="2"/>

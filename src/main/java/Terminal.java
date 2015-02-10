@@ -12,8 +12,11 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 public class Terminal {
+
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, TransformerException {
 
@@ -24,6 +27,10 @@ public class Terminal {
         TerminalXmlHandler terminalXmlHandler = new TerminalXmlHandler();
         File file = new File("../Transaction/src/main/Resource/terminal.xml");
         saxParser.parse((file), terminalXmlHandler);
+        Logger logger=Logger.getLogger(terminalXmlHandler.getTerminalName());
+        FileHandler fileHandler= new FileHandler(terminalXmlHandler.getTerminalLogFile());
+        logger.addHandler(fileHandler);
+
         //second terminal....read transactions...
         File file2 = new File("../Transaction/src/main/Resource/terminal.xml");
         TerminalXmlHandler terminalXmlHandler2 = new TerminalXmlHandler();
@@ -35,20 +42,20 @@ public class Terminal {
 
         Socket clientSocket = new Socket(InetAddress.getLocalHost(), 8080);
         try {
-            while (true) {
-                for (int i = 0; i < 2; i++) {
+            int numOfTransaction = transactionsList.size();
+            DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+            dataOutputStream.writeUTF(String.valueOf(numOfTransaction));
+            logger.info("client sent #of total transactions..");
 
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                    ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
-                    //send one transaction to server for checking...
-                    objectOutputStream.writeObject(transactionsList.get(i));
-                    Transaction transaction = (Transaction) objectInputStream.readObject();
-                    System.out.println(transaction.getId() + ": id send from server");
-                    System.out.println(transaction.getAmount() + ": amount send from server");
-                    //objectInputStream.close();
-                    //objectOutputStream.close();
-                }
+
+            for (int i = 0; i < numOfTransaction; i++) {
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+                logger.info("sending request for transaction ID:"+transactionsList.get(i).getId());
+                ////////send one transaction to server for checking...///////
+                objectOutputStream.writeObject(transactionsList.get(i));
+                logger.info("sent request for transaction ID:"+transactionsList.get(i).getId()+" successfully ");
             }
+
         } catch (Exception e) {
             System.err.println("Client Error: " + e.getMessage());
         }
@@ -59,5 +66,6 @@ public class Terminal {
 
         //System.exit(0);
     }
+
 
 }

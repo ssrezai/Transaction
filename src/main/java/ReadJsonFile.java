@@ -16,6 +16,7 @@ import java.util.Iterator;
 public class ReadJsonFile {
     private ArrayList<Deposit> depositArrayList = new ArrayList<Deposit>();
     private int port;
+    private String logName;
 
     public int getPort() {
         return port;
@@ -25,12 +26,20 @@ public class ReadJsonFile {
         this.port = port;
     }
 
+    public String getLogName() {
+        return logName;
+    }
+
+    public void setLogName(String logName) {
+        this.logName = logName;
+    }
+
     public ArrayList<Deposit> getDepositArrayList() {
         return depositArrayList;
     }
 
     public void readJSON() {
-        Deposit deposit = new Deposit();
+
         org.json.simple.parser.JSONParser jsonParser1 = new org.json.simple.parser.JSONParser();
         try {
 
@@ -45,17 +54,19 @@ public class ReadJsonFile {
             Iterator iterator = deposits.iterator();
             while (iterator.hasNext()) {
                 JSONObject innerObj = (JSONObject) iterator.next();
+                Deposit deposit = new Deposit();
                 deposit.setName((String) innerObj.get("customer"));
                 deposit.setId((String) innerObj.get("id"));
-                BigDecimal b = new BigDecimal((String) innerObj.get("initialBalance"));
-                deposit.setInitialBalance(b);
-                BigDecimal bb = new BigDecimal((String) innerObj.get("upperBound"));
-                deposit.setUpperBound(bb);
+                BigDecimal bigDecimal = new BigDecimal((String) innerObj.get("initialBalance"));
+                deposit.setInitialBalance(bigDecimal);
+                BigDecimal upperBound = new BigDecimal((String) innerObj.get("upperBound"));
+                deposit.setUpperBound(upperBound);
                 depositArrayList.add(deposit);
             }
 
 
             String outLogName = (String) jsonObject.get("outLog");
+            this.setLogName(outLogName);
 
         } catch (Exception e) {
             e.printStackTrace();

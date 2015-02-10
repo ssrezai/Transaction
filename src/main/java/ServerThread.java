@@ -1,12 +1,10 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
  */
-public class ServerThread implements Runnable {
+public class ServerThread extends Thread {
 
     private Transaction transaction;
     private Socket socket;
@@ -18,18 +16,23 @@ public class ServerThread implements Runnable {
 
     @Override
     public void run() {
-       // while(socket.getInputStream().)
 
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
             ObjectInputStream objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+            DataInputStream dataInputStream=new DataInputStream(socket.getInputStream());
+            DataOutputStream dataOutputStream =new DataOutputStream(socket.getOutputStream());
 
-            Transaction t = (Transaction) objectInputStream.readObject();
+            String numberOfTransactions=dataInputStream.readUTF();
+            int loopSize=new Integer(numberOfTransactions);
+            dataOutputStream.writeUTF(String.valueOf(loopSize));
+            for(int i=0;i<loopSize;i++)
+            {
+                Transaction t = (Transaction) objectInputStream.readObject();
 
-            objectOutputStream.writeObject(t);
-            System.out.println(t.getId() + "send from client");
-            System.out.println(t.getAmount() + " :send from client");
-            objectOutputStream.writeObject(t);
+                System.out.println("i= "+i+" "+t.getDeposit());
+            }
+
 
         } catch (IOException e) {
             System.out.println("in or out failed");
