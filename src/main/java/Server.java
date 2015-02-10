@@ -10,17 +10,22 @@ import java.util.logging.Logger;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
- * @author  samira rezaei
- * Server class receive request from clients, proccess and return result..
+ *
+ * @author samira rezaei
+ *         Server class receive request from clients, proccess and return result..
  */
 public class Server implements Runnable {
 
     private Socket socket;
-    public ArrayList<Deposit> depositArrayList;
+    public ArrayList<Deposit> depositArrayList = new ArrayList<Deposit>();
     private Logger logger = Logger.getLogger("server");
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 
     public ArrayList<Deposit> getDepositArrayList() {
@@ -48,18 +53,24 @@ public class Server implements Runnable {
         try {
 
             DataInputStream dataInputStream = new DataInputStream(this.getSocket().getInputStream());
-            String numberOfTransaction = dataInputStream.readUTF();
-            System.out.println("#of Transaction: " + numberOfTransaction);
-            int counter = new Integer(numberOfTransaction);
-            for (int k = 0; k < counter; k++) {
+            String numberOfTransactionStr = dataInputStream.readUTF();
+            System.out.println("#of Transaction: " + numberOfTransactionStr);
+            int numberOfTransactions = Integer.parseInt(numberOfTransactionStr);
+            for (int counter = 0; counter < numberOfTransactions; counter++) {
                 ObjectInputStream objectInputStream = new ObjectInputStream(this.getSocket().getInputStream());
                 Transaction transaction = (Transaction) objectInputStream.readObject();
-                this.getLogger().info("receive new transaction. transaction ID:"+transaction.getId());
+                this.getLogger().info("receive new transaction. transaction ID:" + transaction.getId());
                 System.out.println("id: " + transaction.getId());
-                if(validateDepositID(transaction,this.getDepositArrayList()))
-                {
-                   logger.info("valid user id");
-                }
+               try {
+                   if (validateDepositID(transaction, this.getDepositArrayList())) {
+
+                       logger.info("valid user id");
+                   }
+
+               }
+               catch (InvalidDepositID invalidDepositID) {
+                   invalidDepositID.printStackTrace();
+               }
 
             }
 
@@ -67,22 +78,17 @@ public class Server implements Runnable {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (LowBalanceException e) {
-            e.printStackTrace();
-        } catch (InvalidDepositID invalidDepositID) {
-            invalidDepositID.printStackTrace();
         }
 
 
     }
-    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws LowBalanceException, InvalidDepositID {
+
+    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws  InvalidDepositID {
         boolean result = false;
         for (int i = 0; i < depositArrayList.size(); i++) {
 
             if (transaction.getDeposit() == (depositArrayList.get(i).getId())) {
                 result = true;
-            } else {
-                throw new LowBalanceException("Invalid deposit ID!");
             }
         }
         return result;
@@ -111,8 +117,8 @@ public class Server implements Runnable {
 
             server.getLogger().info("server connected to client... " + clientsSocket.getInetAddress() + " from port#:" + clientsSocket.getPort());
             System.out.println("successful connection to client.." + clientsSocket.getInetAddress());
-
-            Thread thread = new Thread(new Server(clientsSocket));
+            server.setSocket(clientsSocket);
+            Thread thread = new Thread(server);
             server.getLogger().info("make new thread .." + thread.getName());
             thread.start();
             server.getLogger().info("server make a new Thread for " + clientsSocket.getInetAddress() + "with TreadName" + thread.getName());

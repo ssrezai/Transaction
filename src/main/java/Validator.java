@@ -10,14 +10,14 @@ import java.util.Iterator;
  * @author samira Rezaei
  */
 public class Validator {
-    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws LowBalanceException, InvalidDepositID {
+    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws  InvalidDepositID {
         boolean result = false;
         for (int i = 0; i < depositArrayList.size(); i++) {
 
             if (transaction.getDeposit() == (depositArrayList.get(i).getId())) {
                 result = true;
             } else {
-                throw new LowBalanceException("Invalid deposit ID!");
+                throw new InvalidDepositID("Invalid deposit ID!");
             }
         }
         return result;
