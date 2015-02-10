@@ -18,6 +18,7 @@ public class ServerThread implements Runnable {
 
     @Override
     public void run() {
+       // while(socket.getInputStream().)
 
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
