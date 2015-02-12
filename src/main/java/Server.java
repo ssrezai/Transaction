@@ -1,7 +1,10 @@
 import exception.InvalidDepositID;
+import exception.InvalidTransactionTypeException;
+import exception.LimitedUpperBoundException;
 import exception.LowBalanceException;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -10,9 +13,8 @@ import java.util.logging.Logger;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
- *
  * @author samira rezaei
- *         Server class receive request from clients, proccess and return result..
+ * Server class receive request from clients, proccess and return result..
  */
 public class Server implements Runnable {
 
@@ -47,11 +49,19 @@ public class Server implements Runnable {
         return socket;
     }
 
+    public BigDecimal updateDepositBalance(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) {
+        BigDecimal result;
+        if (transaction.getType().equals("deposit")) {
+            result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
+        } else
+            result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());
+        return result;
+    }
 
     @Override
     public void run() {
         try {
-
+            String messageFromServer = "";
             DataInputStream dataInputStream = new DataInputStream(this.getSocket().getInputStream());
             String numberOfTransactionStr = dataInputStream.readUTF();
             System.out.println("#of Transaction: " + numberOfTransactionStr);
@@ -61,16 +71,41 @@ public class Server implements Runnable {
                 Transaction transaction = (Transaction) objectInputStream.readObject();
                 this.getLogger().info("receive new transaction. transaction ID:" + transaction.getId());
                 System.out.println("id: " + transaction.getId());
-               try {
-                   if (validateDepositID(transaction, this.getDepositArrayList())) {
 
-                       logger.info("valid user id");
-                   }
+                try {
+                    if (Validator.validateDepositID(transaction, this.getDepositArrayList())) {
+                        logger.info("Valid user id");
+                        ///now we have a Valid deposit ID, so we can find position of it!
+                        int position = Validator.getTransactionID(transaction, this.getDepositArrayList());
 
-               }
-               catch (InvalidDepositID invalidDepositID) {
-                   invalidDepositID.printStackTrace();
-               }
+                        if (Validator.validateDepositBalance(transaction, this.getDepositArrayList(), position)) {
+                            System.out.println("we can do your request...");
+                            messageFromServer = "server says: validate transaction";
+                            BigDecimal newValue=updateDepositBalance(transaction, this.getDepositArrayList(),position);
+                            System.out.println(newValue);
+                            this.getDepositArrayList().get(position).setInitialBalance(newValue);
+                        }
+                    }
+                } catch (InvalidDepositID invalidDepositID) {
+                    System.out.println("Invalid Deposit ID");
+                    logger.info("Invalid user DepositID");
+                    messageFromServer = "server says:Invalid user DepositID";
+                } catch (LowBalanceException e) {
+                    System.out.println("LowBalanceException for transactionID= " + transaction.getId());
+                    logger.info("LowBalanceException for transactionID= " + transaction.getAmount());
+                    messageFromServer = "server says:LowBalanceException";
+                } catch (LimitedUpperBoundException e) {
+                    System.out.println("LimitedUpperBoundException for transactionID= " + transaction.getId());
+                    logger.info("LimitedUpperBoundException for transactionID= " + transaction.getAmount());
+                    messageFromServer = "server says: LimitedUpperBoundException";
+                } catch (InvalidTransactionTypeException e) {
+                    System.out.println("Unknown deposit type! " + transaction.getId());
+                    logger.info("Unknown deposit type! " + transaction.getId());
+                    messageFromServer = "server says: Unknown deposit type!";
+                }
+                //server sends message to client....
+                DataOutputStream dataOutputStream = new DataOutputStream(this.getSocket().getOutputStream());
+                dataOutputStream.writeUTF(messageFromServer);
 
             }
 
@@ -83,16 +118,6 @@ public class Server implements Runnable {
 
     }
 
-    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws  InvalidDepositID {
-        boolean result = false;
-        for (int i = 0; i < depositArrayList.size(); i++) {
-
-            if (transaction.getDeposit() == (depositArrayList.get(i).getId())) {
-                result = true;
-            }
-        }
-        return result;
-    }
 
     public static void main(String[] args) throws Exception {
 

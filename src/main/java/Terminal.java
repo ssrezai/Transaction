@@ -5,7 +5,6 @@
 
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.TransformerException;
 import java.io.*;
@@ -27,8 +26,8 @@ public class Terminal {
         TerminalXmlHandler terminalXmlHandler = new TerminalXmlHandler();
         File file = new File("../Transaction/src/main/Resource/terminal.xml");
         saxParser.parse((file), terminalXmlHandler);
-        Logger logger=Logger.getLogger(terminalXmlHandler.getTerminalName());
-        FileHandler fileHandler= new FileHandler(terminalXmlHandler.getTerminalLogFile());
+        Logger logger = Logger.getLogger(terminalXmlHandler.getTerminalName());
+        FileHandler fileHandler = new FileHandler(terminalXmlHandler.getTerminalLogFile());
         logger.addHandler(fileHandler);
 
         //second terminal....read transactions...
@@ -44,16 +43,20 @@ public class Terminal {
         try {
             int numOfTransaction = transactionsList.size();
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+            DataInputStream dataInputStream= new DataInputStream(clientSocket.getInputStream());
             dataOutputStream.writeUTF(String.valueOf(numOfTransaction));
             logger.info("client sent #of total transactions..");
 
-
-            for (int i = 0; i < numOfTransaction; i++) {
+        /////send all of transaction in this loop
+            for (Transaction aTransactionsList : transactionsList) {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                logger.info("sending request for transaction ID:"+transactionsList.get(i).getId());
+                logger.info("sending request for transaction ID:" + aTransactionsList.getId());
                 ////////send one transaction to server for checking...///////
-                objectOutputStream.writeObject(transactionsList.get(i));
-                logger.info("sent request for transaction ID:"+transactionsList.get(i).getId()+" successfully ");
+                objectOutputStream.writeObject(aTransactionsList);
+                logger.info("successfully sent request for transaction ID:" + aTransactionsList.getId());
+                String str = dataInputStream.readUTF();
+                System.out.println(str);
+                logger.info(str);
             }
 
         } catch (Exception e) {

@@ -2,10 +2,12 @@
     <server ip="192.168.4.25" port="8080"/>
     <outLog path="terminal123.log"/>
     <transactions>
-        <transaction id="1" type="deposit" amount="56655" deposit="1"/>
-        <transaction id="21" type="deposit" amount="9568895000" deposit="2"/>
-        <transaction id="11" type="withdraw" amount="200000" deposit="3"/>
-        <transaction id="10" type="withdraw" amount="25" deposit="4"/>
-        <transaction id="2" type="deposit" amount="100000000" deposit="5"/>
+        <transaction id="10" type="deposit" amount="56655" deposit="1"/>
+        <transaction id="11" type="withdraw" amount="56655" deposit="1"/>
+        <transaction id="20" type="deposit" amount="100" deposit="2"/>
+        <transaction id="30" type="withdraw" amount="1000" deposit="3"/>
+        <transaction id="40" type="withdraw" amount="25" deposit="5"/>
+        <transaction id="50" type="deposit" amount="2000" deposit="6"/>
+        <transaction id="60" type="withdraw" amount="2000" deposit="5"/>
     </transactions>
 </terminal>
