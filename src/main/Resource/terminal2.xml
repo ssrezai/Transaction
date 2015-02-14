@@ -1,0 +1,14 @@
+<terminal id="456" type="ATM">
+    <server ip="" port="8080"/>
+    <outLog path="terminal456.log"/>
+    <transactions>
+        <transaction id="1" type="withdraw" amount="10000000" deposit="1"/>
+        <transaction id="2" type="deposit" amount="5000000000000" deposit="2"/>
+        <transaction id="3" type="withdraw" amount="5555500000" deposit="3"/>
+        <transaction id="4" type="withdraw" amount="2500000000" deposit="4"/>
+        <transaction id="5" type="deposit" amount="45555" deposit="5"/>
+        <transaction id="6" type="withdraw" amount="5555500000" deposit="3"/>
+        <transaction id="7" type="withdraw" amount="2500000000" deposit="6"/>
+        <transaction id="8" type="withdraw" amount="45555" deposit="1"/>
+    </transactions>
+</terminal>
