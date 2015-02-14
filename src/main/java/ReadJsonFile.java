@@ -1,11 +1,8 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-//import  org.json.simple.parser.JSONParser;
-
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/7/2015.
@@ -51,9 +48,8 @@ public class ReadJsonFile {
             this.setPort(port);
 
             JSONArray deposits = (JSONArray) jsonObject.get("deposits");
-            Iterator iterator = deposits.iterator();
-            while (iterator.hasNext()) {
-                JSONObject innerObj = (JSONObject) iterator.next();
+            for (Object deposit1 : deposits) {
+                JSONObject innerObj = (JSONObject) deposit1;
                 Deposit deposit = new Deposit();
                 deposit.setName((String) innerObj.get("customer"));
                 deposit.setId((String) innerObj.get("id"));

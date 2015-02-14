@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/14/2015.
+ * @author Samira Rezaei
  */
 public class Terminal2 {
 

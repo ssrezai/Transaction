@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class TerminalXmlHandler extends DefaultHandler {
     private ArrayList<Transaction> transactionsList = new ArrayList<Transaction>();
-    private String ipAddress;
+   // private String ipAddress;
     private int port;
     private String TerminalLogFile;
 
@@ -28,21 +28,21 @@ public class TerminalXmlHandler extends DefaultHandler {
         return transactionsList;
     }
 
-    public void setTransactionsList(ArrayList<Transaction> transactionsList) {
-        this.transactionsList = transactionsList;
-    }
+//    public void setTransactionsList(ArrayList<Transaction> transactionsList) {
+//        this.transactionsList = transactionsList;
+//    }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
+//    public String getIpAddress() {
+//        return ipAddress;
+//    }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
+//    public void setIpAddress(String ipAddress) {
+//        this.ipAddress = ipAddress;
+//    }
 
-    public int getPort() {
-        return port;
-    }
+//    public int getPort() {
+//        return port;
+//    }
 
     public void setPort(int port) {
         this.port = port;
@@ -75,6 +75,10 @@ public class TerminalXmlHandler extends DefaultHandler {
         else if (qName.equalsIgnoreCase("terminal"))
         {
             this.setTerminalName(attributes.getValue("type")+"_"+attributes.getValue("id"));
+        }
+        else if(qName.equalsIgnoreCase("server"))
+        {
+            this.setPort(Integer.parseInt(attributes.getValue("port")));
         }
     }
 

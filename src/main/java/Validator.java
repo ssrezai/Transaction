@@ -30,16 +30,13 @@ public class Validator {
         String transactionType = transaction.getType();
 
         if (transactionType.equals("deposit")) {
-            if (validateDeposit(transaction, depositArrayList, position)) {
-
-            } else {
+            if (!validateDeposit(transaction, depositArrayList, position)) {
                 throw new LimitedUpperBoundException("");
             }
 
         } else if (transactionType.equals("withdraw")) {
             if (!validateWithdraw(transaction, depositArrayList, position)) {
                 throw new LowBalanceException("");
-
             }
 
         } else
@@ -50,7 +47,7 @@ public class Validator {
 
     public static boolean validateDeposit(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) throws LimitedUpperBoundException {
         BigDecimal amount = transaction.getAmount();
-        BigDecimal initialBalance = depositArrayList.get(position).initialBalance;
+        BigDecimal initialBalance = depositArrayList.get(position).getInitialBalance();
         BigDecimal afterDeposit = amount.add(initialBalance);
         if (afterDeposit.compareTo(depositArrayList.get(position).getUpperBound()) < 0) {
             return true;
@@ -62,7 +59,7 @@ public class Validator {
 
     public static boolean validateWithdraw(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) throws LowBalanceException {
         BigDecimal amount = transaction.getAmount();
-        BigDecimal initialBalance = depositArrayList.get(position).initialBalance;
+        BigDecimal initialBalance = depositArrayList.get(position).getInitialBalance();
         if (amount.compareTo(initialBalance) < 0) {
             return true;
         } else {

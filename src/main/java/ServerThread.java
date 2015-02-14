@@ -12,32 +12,37 @@ import java.util.List;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
+ * @author  Samira Rezaei
  */
 public class ServerThread implements Runnable {
 
-    private List<Deposit>depositArrayList= Collections.synchronizedList(new ArrayList<Deposit>());
+    private List<Deposit> depositArrayList = Collections.synchronizedList(new ArrayList<Deposit>());
 
     private Socket socket;
     private Server server;
 
-    public ServerThread(Socket socket,ArrayList<Deposit>depositArrayList) {
+    //    public ServerThread(Socket socket,ArrayList<Deposit>depositArrayList) {
+//
+//        this.socket = socket;
+//        this.depositArrayList=depositArrayList;
+//    }
+    public ServerThread(Socket socket, Server server) {
 
         this.socket = socket;
-        this.depositArrayList=depositArrayList;
-    }
-    public ServerThread(Socket socket,Server server) {
-
-        this.socket = socket;
-        this.server=server;
+        this.server = server;
+        this.depositArrayList = server.getDepositArrayList();
     }
 
     public BigDecimal updateDepositBalance(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) {
         BigDecimal result;
         if (transaction.getType().equals("deposit")) {
-            result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
-        } else
-        {result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());}
-       // this.depositArrayList.get(position).setInitialBalance(result);
+            synchronized (depositArrayList.get(position)) {
+                result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
+            }
+        } else {
+            result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());
+        }
+        // this.depositArrayList.get(position).setInitialBalance(result);
         return result;
     }
 
@@ -61,7 +66,9 @@ public class ServerThread implements Runnable {
                         ///now we have a Valid deposit ID, so we can find position of it!
                         int position = Validator.getTransactionID(transaction, this.server.getDepositArrayList());
 
-                        synchronized (this){
+                        synchronized (this.depositArrayList.get(position)) {
+//                            if (!this.depositArrayList.get(position).getSynch()) {
+//                                this.depositArrayList.get(position).setSynch(true);
                             if (Validator.validateDepositBalance(transaction, this.server.getDepositArrayList(), position)) {
                                 System.out.println("we can do your request...");
                                 messageFromServer = "server says: validate transaction";
@@ -70,6 +77,11 @@ public class ServerThread implements Runnable {
                                 System.out.println(newValue);
                                 this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
                             }
+                            this.depositArrayList.get(position).setSynch(false);
+                            // notify();
+//                            } else {
+//                                wait();
+//                            }
                         }
                     }
                 } catch (InvalidDepositID invalidDepositID) {
@@ -88,7 +100,9 @@ public class ServerThread implements Runnable {
                     System.out.println("Unknown deposit type! " + transaction.getId());
                     this.server.getLogger().info("Unknown deposit type! " + transaction.getId());
                     messageFromServer = "server says: Unknown deposit type!";
-                }
+                } //catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
                 //server sends message to client....
                 DataOutputStream dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
                 dataOutputStream.writeUTF(messageFromServer);

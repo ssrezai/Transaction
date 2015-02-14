@@ -36,7 +36,7 @@ public class Terminal {
         saxParser.parse(file2, terminalXmlHandler2);
         //list of deposits
         ArrayList<Transaction> transactionsList = terminalXmlHandler.getTransactionsList();
-        ArrayList<Transaction> transactionsList2 = terminalXmlHandler2.getTransactionsList();
+        //ArrayList<Transaction> transactionsList2 = terminalXmlHandler2.getTransactionsList();
 
 
         Socket clientSocket = new Socket(InetAddress.getLocalHost(), 8080);

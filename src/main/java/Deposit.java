@@ -6,9 +6,17 @@ import java.math.BigDecimal;
 public class Deposit {
     private String name;
     private String id;
-    BigDecimal initialBalance;
-    BigDecimal upperBound;
+   private BigDecimal initialBalance;
+  private   BigDecimal upperBound;
+  private   Boolean synch=false;
 
+    public Boolean getSynch() {
+        return synch;
+    }
+
+    public void setSynch(Boolean synch) {
+        this.synch = synch;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -36,5 +44,9 @@ public class Deposit {
 
     public void setUpperBound(BigDecimal upperBound) {
         this.upperBound = upperBound;
+    }
+
+    public String getName() {
+        return name;
     }
 }
