@@ -12,20 +12,16 @@ import java.util.List;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
- * @author  Samira Rezaei
+ *
+ * @author Samira Rezaei
  */
 public class ServerThread implements Runnable {
 
-    private List<Deposit> depositArrayList = Collections.synchronizedList(new ArrayList<Deposit>());
-
+//    private List<Deposit> depositArrayList = Collections.synchronizedList(new ArrayList<Deposit>());
+    private ArrayList<Deposit> depositArrayList=new ArrayList<Deposit>();
     private Socket socket;
     private Server server;
 
-    //    public ServerThread(Socket socket,ArrayList<Deposit>depositArrayList) {
-//
-//        this.socket = socket;
-//        this.depositArrayList=depositArrayList;
-//    }
     public ServerThread(Socket socket, Server server) {
 
         this.socket = socket;
@@ -36,13 +32,12 @@ public class ServerThread implements Runnable {
     public BigDecimal updateDepositBalance(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) {
         BigDecimal result;
         if (transaction.getType().equals("deposit")) {
-            synchronized (depositArrayList.get(position)) {
-                result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
-            }
+
+            result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
+
         } else {
             result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());
         }
-        // this.depositArrayList.get(position).setInitialBalance(result);
         return result;
     }
 
@@ -65,25 +60,25 @@ public class ServerThread implements Runnable {
                         this.server.getLogger().info("Valid user id");
                         ///now we have a Valid deposit ID, so we can find position of it!
                         int position = Validator.getTransactionID(transaction, this.server.getDepositArrayList());
-
-                        synchronized (this.depositArrayList.get(position)) {
+                        System.out.println("initialBalance: " + this.depositArrayList.get(position).getInitialBalance());
+                      // synchronized (this.depositArrayList.get(position)) {
 //                            if (!this.depositArrayList.get(position).getSynch()) {
 //                                this.depositArrayList.get(position).setSynch(true);
-                            if (Validator.validateDepositBalance(transaction, this.server.getDepositArrayList(), position)) {
-                                System.out.println("we can do your request...");
-                                messageFromServer = "server says: validate transaction";
-                                BigDecimal newValue = updateDepositBalance(transaction, server.getDepositArrayList(), position);
-                                this.depositArrayList.get(position).setInitialBalance(newValue);
-                                System.out.println(newValue);
-                                this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
-                            }
-                            this.depositArrayList.get(position).setSynch(false);
-                            // notify();
+                        if (Validator.validateDepositBalance(transaction, this.server.getDepositArrayList(), position)) {
+                            System.out.println("we can do your request...");
+                            messageFromServer = "server says: validate transaction";
+                            BigDecimal newValue = updateDepositBalance(transaction, server.getDepositArrayList(), position);
+                            this.depositArrayList.get(position).setInitialBalance(newValue);
+                            System.out.println("new Balance: " + this.depositArrayList.get(position).getInitialBalance());
+                            this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
+                        }
+                        this.depositArrayList.get(position).setSynch(false);
+                        // notify();
 //                            } else {
 //                                wait();
 //                            }
-                        }
-                    }
+                         }
+                  //  }
                 } catch (InvalidDepositID invalidDepositID) {
                     System.out.println("Invalid Deposit ID");
                     this.server.getLogger().info("Invalid user DepositID");

@@ -1,4 +1,4 @@
-import exception.LowBalanceException;
+
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,6 +23,16 @@ public class Transaction implements Serializable {
 
     public String getType() {
         return type;
+    }
+
+    public Transaction() {
+    }
+
+    public Transaction(String id, String type, BigDecimal amount, String depositId) {
+        this.id = id;
+        this.type = type;
+        this.amount = amount;
+        this.depositId = depositId;
     }
 
     public void setType(String type) {

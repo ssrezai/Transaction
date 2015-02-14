@@ -67,24 +67,28 @@ public class Server {
         while (true) {
             try {
                 Socket clientsSocket = serverSocket.accept();
-
+                Socket clientsSocket2 = serverSocket.accept();
                 server.getLogger().info("server connected to client... " + clientsSocket.getInetAddress() + " from port#:" + clientsSocket.getPort());
                 System.out.println("successful connection to client.." + clientsSocket.getInetAddress());
                 server.setSocket(clientsSocket);
                 ServerThread serverThread = new ServerThread(clientsSocket, server);
+                ServerThread serverThread2 = new ServerThread(clientsSocket2, server);
                 Thread thread = new Thread(serverThread);
+                Thread thread2 = new Thread(serverThread2);
                 server.getLogger().info("server make a new Thread for " + clientsSocket.getInetAddress() + "with TreadName" + thread.getName());
                 server.getLogger().info("make new thread .." + thread.getName());
                 thread.start();
                 System.out.println("thread name" + thread.getName());
-                randomAccessFile.writeUTF("run for thread: "+thread.getName()+"\n\r");
-                for(int count=0;count<server.getDepositArrayList().size();count++)
-                {
-                    randomAccessFile.writeUTF(server.getDepositArrayList().get(count).getName()+":\t"+
-                            String.valueOf(server.getDepositArrayList().get(count).getInitialBalance())+"\r" );
-                    //randomAccessFile
-                    System.out.println(server.getDepositArrayList().get(count).getInitialBalance());
-                }
+                thread2.start();
+             //   System.out.println("thread name" + thread2.getName());
+//                randomAccessFile.writeUTF("run for thread: "+thread.getName()+"\n\r");
+//                for(int count=0;count<server.getDepositArrayList().size();count++)
+//                {
+//                    randomAccessFile.writeUTF(server.getDepositArrayList().get(count).getName()+":\t"+
+//                            String.valueOf(server.getDepositArrayList().get(count).getInitialBalance())+"\r" );
+//                    //randomAccessFile
+//                    System.out.println(server.getDepositArrayList().get(count).getInitialBalance());
+//                }
 
             } catch (IOException e) {
                 System.out.println("Accept failed: " + port);
