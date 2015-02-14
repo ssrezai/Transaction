@@ -1,10 +1,4 @@
-import exception.InvalidDepositID;
-import exception.InvalidTransactionTypeException;
-import exception.LimitedUpperBoundException;
-import exception.LowBalanceException;
-
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -19,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    private Socket socket;
+   private Socket socket;
     public ArrayList<Deposit> depositArrayList = new ArrayList<Deposit>();
     private Logger logger = Logger.getLogger("server");
 
@@ -46,18 +40,18 @@ public class Server {
     public Server() {
     }
 
-    public Socket getSocket() {
-        return socket;
-    }
+//    public Socket getSocket() {
+//        return socket;
+//    }
 
-    public BigDecimal updateDepositBalance(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) {
-        BigDecimal result;
-        if (transaction.getType().equals("deposit")) {
-            result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
-        } else
-            result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());
-        return result;
-    }
+//    public BigDecimal updateDepositBalance(Transaction transaction, ArrayList<Deposit> depositArrayList, int position) {
+//        BigDecimal result;
+//        if (transaction.getType().equals("deposit")) {
+//            result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
+//        } else
+//            result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());
+//        return result;
+//    }
 
     //  @Override
 //    public void run() {
@@ -127,7 +121,7 @@ public class Server {
         ReadJsonFile readJsonFile = new ReadJsonFile();
         readJsonFile.readJSON();
         ArrayList<Deposit> depositArrayList = readJsonFile.getDepositArrayList();
-        server.setDepositArrayList(readJsonFile.getDepositArrayList());
+        server.setDepositArrayList(depositArrayList);
         int port = readJsonFile.getPort();
 
         ///create log file for server...///

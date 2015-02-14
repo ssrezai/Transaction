@@ -7,13 +7,16 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
  */
 public class ServerThread implements Runnable {
 
-    private ArrayList<Deposit>depositArrayList=new ArrayList<Deposit>();
+    private List<Deposit>depositArrayList= Collections.synchronizedList(new ArrayList<Deposit>());
+
     private Socket socket;
     private Server server;
 
@@ -33,7 +36,8 @@ public class ServerThread implements Runnable {
         if (transaction.getType().equals("deposit")) {
             result = depositArrayList.get(position).getInitialBalance().add(transaction.getAmount());
         } else
-            result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());
+        {result = depositArrayList.get(position).getInitialBalance().subtract(transaction.getAmount());}
+       // this.depositArrayList.get(position).setInitialBalance(result);
         return result;
     }
 
@@ -57,12 +61,15 @@ public class ServerThread implements Runnable {
                         ///now we have a Valid deposit ID, so we can find position of it!
                         int position = Validator.getTransactionID(transaction, this.server.getDepositArrayList());
 
-                        if (Validator.validateDepositBalance(transaction, this.server.getDepositArrayList(), position)) {
-                            System.out.println("we can do your request...");
-                            messageFromServer = "server says: validate transaction";
-                            BigDecimal newValue=updateDepositBalance(transaction, server.getDepositArrayList(),position);
-                            System.out.println(newValue);
-                            this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
+                        synchronized (this){
+                            if (Validator.validateDepositBalance(transaction, this.server.getDepositArrayList(), position)) {
+                                System.out.println("we can do your request...");
+                                messageFromServer = "server says: validate transaction";
+                                BigDecimal newValue = updateDepositBalance(transaction, server.getDepositArrayList(), position);
+                                this.depositArrayList.get(position).setInitialBalance(newValue);
+                                System.out.println(newValue);
+                                this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
+                            }
                         }
                     }
                 } catch (InvalidDepositID invalidDepositID) {
