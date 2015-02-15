@@ -2,21 +2,23 @@ import java.math.BigDecimal;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/7/2015.
+ * @author Samira Rezai
+ * Deposit class
  */
 public class Deposit {
     private String name;
     private String id;
    private BigDecimal initialBalance;
   private   BigDecimal upperBound;
-  private   Boolean synch=false;
-
-    public Boolean getSynch() {
-        return synch;
-    }
-
-    public void setSynch(Boolean synch) {
-        this.synch = synch;
-    }
+//  private   Boolean synchronize=false;
+//
+//    public Boolean getSynchronize() {
+//        return synchronize;
+//    }
+//
+//    public void setSynchronize(Boolean synchronize) {
+//        this.synchronize = synchronize;
+//    }
 
     public void setName(String name) {
         this.name = name;
