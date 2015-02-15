@@ -24,14 +24,14 @@ public class Terminal {
         SAXParser saxParser = saxParserFactory.newSAXParser();
         ////first terminal.....read transactions....
         TerminalXmlHandler terminalXmlHandler = new TerminalXmlHandler();
-        File file = new File("../Transaction/src/main/Resource/terminal.xml");
+        File file = new File("../Transaction/src/main/Resource/Client/terminal.xml");
         saxParser.parse((file), terminalXmlHandler);
         Logger logger = Logger.getLogger(terminalXmlHandler.getTerminalName());
         FileHandler fileHandler = new FileHandler(terminalXmlHandler.getTerminalLogFile());
         logger.addHandler(fileHandler);
 
         //second terminal....read transactions...
-        File file2 = new File("../Transaction/src/main/Resource/terminal.xml");
+        File file2 = new File("../Transaction/src/main/Resource/Client/terminal.xml");
         TerminalXmlHandler terminalXmlHandler2 = new TerminalXmlHandler();
         saxParser.parse(file2, terminalXmlHandler2);
         //list of deposits
@@ -40,8 +40,9 @@ public class Terminal {
 
         ArrayList<String> statusList = new ArrayList<String>();
         ArrayList<String> balanceList = new ArrayList<String>();
+        int port=terminalXmlHandler.getPort();
 
-        Socket clientSocket = new Socket(InetAddress.getLocalHost(), 8080);
+        Socket clientSocket = new Socket(InetAddress.getLocalHost(), port);
         try {
             int numOfTransaction = transactionsList.size();
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());

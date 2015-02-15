@@ -40,7 +40,7 @@ public class ReadJsonFile {
         org.json.simple.parser.JSONParser jsonParser1 = new org.json.simple.parser.JSONParser();
         try {
 
-            Object object = jsonParser1.parse(new FileReader("..\\Transaction\\src\\main/Resource/core.json"));
+            Object object = jsonParser1.parse(new FileReader("..\\Transaction\\src\\main/Resource/Server/core.json"));
 
             JSONObject jsonObject = (JSONObject) object;
 

@@ -7,8 +7,6 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
@@ -17,8 +15,8 @@ import java.util.List;
  */
 public class ServerThread implements Runnable {
 
-//    private List<Deposit> depositArrayList = Collections.synchronizedList(new ArrayList<Deposit>());
-    private ArrayList<Deposit> depositArrayList=new ArrayList<Deposit>();
+    //private List<Deposit> depositArrayList = Collections.synchronizedList(new ArrayList<Deposit>());
+    private ArrayList<Deposit> depositArrayList = new ArrayList<Deposit>();
     private Socket socket;
     private Server server;
 
@@ -44,10 +42,10 @@ public class ServerThread implements Runnable {
     @Override
     public void run() {
         try {
-            Thread.sleep(5);
+            //Thread.sleep(5);
             String messageFromServer = "";
-            String status="";
-            String balance="";
+            String status = "";
+            String balance = " ";
             DataInputStream dataInputStream = new DataInputStream(this.socket.getInputStream());
             String numberOfTransactionStr = dataInputStream.readUTF();
             System.out.println("#of Transaction: " + numberOfTransactionStr);
@@ -56,18 +54,22 @@ public class ServerThread implements Runnable {
             for (int counter = 0; counter < numberOfTransactions; counter++) {
                 ObjectInputStream objectInputStream = new ObjectInputStream(this.socket.getInputStream());
                 Transaction transaction = (Transaction) objectInputStream.readObject();
-                this.server.getLogger().info("receive new transaction. transaction ID:" + transaction.getId());
+                synchronized (this.server.getLogger()) {
+                    this.server.getLogger().info("receive new transaction. transaction ID:" + transaction.getId());
+                }
                 System.out.println("id: " + transaction.getId());
 
                 try {
                     if (Validator.validateDepositID(transaction, this.server.getDepositArrayList())) {
-                        this.server.getLogger().info("Valid user id");
+                        synchronized (this.server.getLogger()) {
+                            this.server.getLogger().info("Valid user id");
+                        }
                         ///now we have a Valid deposit ID, so we can find position of it!
                         int position = Validator.getTransactionID(transaction, this.server.getDepositArrayList());
                         System.out.println("initialBalance: " + this.depositArrayList.get(position).getInitialBalance());
-                      // synchronized (this.depositArrayList.get(position)) {
-//                            if (!this.depositArrayList.get(position).getSynch()) {
-//                                this.depositArrayList.get(position).setSynch(true);
+                        // synchronized (this.depositArrayList.get(position)) {
+//                            if (!this.depositArrayList.get(position).getSynchronize()) {
+//                                this.depositArrayList.get(position).setSynchronize(true);
                         if (Validator.validateDepositBalance(transaction, this.server.getDepositArrayList(), position)) {
                             System.out.println("we can do your request...");
                             messageFromServer = "server says: validate transaction";
@@ -75,35 +77,43 @@ public class ServerThread implements Runnable {
                             this.depositArrayList.get(position).setInitialBalance(newValue);
                             System.out.println("new Balance: " + this.depositArrayList.get(position).getInitialBalance());
                             this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
-                            status="Successful";
-                            balance=String.valueOf(this.server.getDepositArrayList().get(position).getInitialBalance());
+                            status = "Successful";
+                            balance = String.valueOf(this.server.getDepositArrayList().get(position).getInitialBalance());
                         }
-                        this.depositArrayList.get(position).setSynch(false);
+                        // this.depositArrayList.get(position).setSynchronize(false);
                         // notify();
 //                            } else {
 //                                wait();
 //                            }
-                         }
-                  //  }
+                    }
+                    //  }
                 } catch (InvalidDepositID invalidDepositID) {
                     System.out.println("Invalid Deposit ID");
-                    this.server.getLogger().info("Invalid user DepositID");
+                    synchronized (this.server.getLogger()) {
+                        this.server.getLogger().info("Invalid user DepositID");
+                    }
                     messageFromServer = "server says:Invalid user DepositID";
-                    status="Unsuccessful";
+                    status = "Unsuccessful";
                 } catch (LowBalanceException e) {
                     System.out.println("LowBalanceException for transactionID= " + transaction.getId());
-                    this.server.getLogger().info("LowBalanceException for transactionID= " + transaction.getAmount());
+                    synchronized (this.server.getLogger()) {
+                        this.server.getLogger().info("LowBalanceException for transactionID= " + transaction.getAmount());
+                    }
                     messageFromServer = "server says:LowBalanceException";
-                    status="Unsuccessful";
+                    status = "Unsuccessful";
                 } catch (LimitedUpperBoundException e) {
                     System.out.println("LimitedUpperBoundException for transactionID= " + transaction.getId());
-                    this.server.getLogger().info("LimitedUpperBoundException for transactionID= " + transaction.getAmount());
+                    synchronized (this.server.getLogger()) {
+                        this.server.getLogger().info("LimitedUpperBoundException for transactionID= " + transaction.getAmount());
+                    }
                     messageFromServer = "server says: LimitedUpperBoundException";
                 } catch (InvalidTransactionTypeException e) {
                     System.out.println("Unknown deposit type! " + transaction.getId());
-                    this.server.getLogger().info("Unknown deposit type! " + transaction.getId());
+                    synchronized (this.server.getLogger()) {
+                        this.server.getLogger().info("Unknown deposit type! " + transaction.getId());
+                    }
                     messageFromServer = "server says: Unknown deposit type!";
-                    status="Unsuccessful";
+                    status = "Unsuccessful";
                 } //catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
@@ -118,8 +128,6 @@ public class ServerThread implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

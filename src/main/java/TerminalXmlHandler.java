@@ -28,21 +28,10 @@ public class TerminalXmlHandler extends DefaultHandler {
         return transactionsList;
     }
 
-//    public void setTransactionsList(ArrayList<Transaction> transactionsList) {
-//        this.transactionsList = transactionsList;
-//    }
 
-//    public String getIpAddress() {
-//        return ipAddress;
-//    }
-
-//    public void setIpAddress(String ipAddress) {
-//        this.ipAddress = ipAddress;
-//    }
-
-//    public int getPort() {
-//        return port;
-//    }
+    public int getPort() {
+        return port;
+    }
 
     public void setPort(int port) {
         this.port = port;
@@ -86,7 +75,7 @@ public class TerminalXmlHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String elementName) throws SAXException {
 
     }
-
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 
     }

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /**
  * Created by DOTIN SCHOOL 3 on 2/9/2015.
  * @author samira rezaei
- *         Server class receive request from clients, proccess and return result..
+ *   Server class receive request from clients, proccess and return result..
  */
 public class Server {
 
@@ -32,8 +32,8 @@ public class Server {
         this.depositArrayList = depositArrayList;
     }
 
-    public Server(Socket socket) {
-        this.socket = socket;
+    public Socket getSocket() {
+        return socket;
     }
 
     public Server() {
@@ -63,13 +63,14 @@ public class Server {
         ///Socket....///
         ServerSocket serverSocket = new ServerSocket(port);
         System.out.println("server in listening mode... ");
-        RandomAccessFile randomAccessFile= new RandomAccessFile("../Transaction/src/main/Resource/output.txt","rw");
         while (true) {
             try {
                 Socket clientsSocket = serverSocket.accept();
                 Socket clientsSocket2 = serverSocket.accept();
-                server.getLogger().info("server connected to client... " + clientsSocket.getInetAddress() + " from port#:" + clientsSocket.getPort());
+                System.out.println(clientsSocket+"  "+clientsSocket2);
+                server.getLogger().info("server connected to client... from: " + clientsSocket.getInetAddress() + " from port#:" + clientsSocket.getPort());
                 System.out.println("successful connection to client.." + clientsSocket.getInetAddress());
+                server.socket = clientsSocket;
                 server.setSocket(clientsSocket);
                 ServerThread serverThread = new ServerThread(clientsSocket, server);
                 ServerThread serverThread2 = new ServerThread(clientsSocket2, server);
