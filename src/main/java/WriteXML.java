@@ -1,5 +1,6 @@
 /**
  * Created by DOTIN SCHOOL 3 on 2/15/2015.
+ *
  */
 import java.io.File;
 import java.util.ArrayList;
@@ -58,8 +59,6 @@ public class WriteXML {
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(new File("../Transaction/src/main/Outputs/"+name+".xml"));
 
-            // Output to console for testing
-            // StreamResult result = new StreamResult(System.out);
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(source, result);
 

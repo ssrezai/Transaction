@@ -1,4 +1,4 @@
-import exception.InvalidDepositID;
+import exception.InvalidDepositIDException;
 import exception.InvalidTransactionTypeException;
 import exception.LimitedUpperBoundException;
 import exception.LowBalanceException;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author samira Rezaei
  */
 public class Validator {
-    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws InvalidDepositID {
+    public static boolean validateDepositID(Transaction transaction, ArrayList<Deposit> depositArrayList) throws InvalidDepositIDException {
         String transactionDepositID = transaction.getDeposit();
         int counter = 0;
         while (counter < depositArrayList.size()) {
@@ -22,7 +22,7 @@ public class Validator {
             }
             counter++;
         }
-        throw new InvalidDepositID("Invalid deposit ID!");
+        throw new InvalidDepositIDException("Invalid deposit ID!");
     }
 
     public static boolean validateDepositBalance(Transaction transaction, ArrayList<Deposit> depositArrayList, int position)
@@ -38,10 +38,8 @@ public class Validator {
             if (!validateWithdraw(transaction, depositArrayList, position)) {
                 throw new LowBalanceException("");
             }
-
         } else
             throw new InvalidTransactionTypeException("");
-
         return true;
     }
 
