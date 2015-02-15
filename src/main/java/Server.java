@@ -80,15 +80,7 @@ public class Server {
                 thread.start();
                 System.out.println("thread name" + thread.getName());
                 thread2.start();
-             //   System.out.println("thread name" + thread2.getName());
-//                randomAccessFile.writeUTF("run for thread: "+thread.getName()+"\n\r");
-//                for(int count=0;count<server.getDepositArrayList().size();count++)
-//                {
-//                    randomAccessFile.writeUTF(server.getDepositArrayList().get(count).getName()+":\t"+
-//                            String.valueOf(server.getDepositArrayList().get(count).getInitialBalance())+"\r" );
-//                    //randomAccessFile
-//                    System.out.println(server.getDepositArrayList().get(count).getInitialBalance());
-//                }
+
 
             } catch (IOException e) {
                 System.out.println("Accept failed: " + port);

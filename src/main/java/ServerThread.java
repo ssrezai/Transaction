@@ -44,11 +44,15 @@ public class ServerThread implements Runnable {
     @Override
     public void run() {
         try {
+            Thread.sleep(5);
             String messageFromServer = "";
+            String status="";
+            String balance="";
             DataInputStream dataInputStream = new DataInputStream(this.socket.getInputStream());
             String numberOfTransactionStr = dataInputStream.readUTF();
             System.out.println("#of Transaction: " + numberOfTransactionStr);
             int numberOfTransactions = Integer.parseInt(numberOfTransactionStr);
+            ///for each transaction
             for (int counter = 0; counter < numberOfTransactions; counter++) {
                 ObjectInputStream objectInputStream = new ObjectInputStream(this.socket.getInputStream());
                 Transaction transaction = (Transaction) objectInputStream.readObject();
@@ -71,6 +75,8 @@ public class ServerThread implements Runnable {
                             this.depositArrayList.get(position).setInitialBalance(newValue);
                             System.out.println("new Balance: " + this.depositArrayList.get(position).getInitialBalance());
                             this.server.getDepositArrayList().get(position).setInitialBalance(newValue);
+                            status="Successful";
+                            balance=String.valueOf(this.server.getDepositArrayList().get(position).getInitialBalance());
                         }
                         this.depositArrayList.get(position).setSynch(false);
                         // notify();
@@ -83,10 +89,12 @@ public class ServerThread implements Runnable {
                     System.out.println("Invalid Deposit ID");
                     this.server.getLogger().info("Invalid user DepositID");
                     messageFromServer = "server says:Invalid user DepositID";
+                    status="Unsuccessful";
                 } catch (LowBalanceException e) {
                     System.out.println("LowBalanceException for transactionID= " + transaction.getId());
                     this.server.getLogger().info("LowBalanceException for transactionID= " + transaction.getAmount());
                     messageFromServer = "server says:LowBalanceException";
+                    status="Unsuccessful";
                 } catch (LimitedUpperBoundException e) {
                     System.out.println("LimitedUpperBoundException for transactionID= " + transaction.getId());
                     this.server.getLogger().info("LimitedUpperBoundException for transactionID= " + transaction.getAmount());
@@ -95,18 +103,23 @@ public class ServerThread implements Runnable {
                     System.out.println("Unknown deposit type! " + transaction.getId());
                     this.server.getLogger().info("Unknown deposit type! " + transaction.getId());
                     messageFromServer = "server says: Unknown deposit type!";
+                    status="Unsuccessful";
                 } //catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
                 //server sends message to client....
                 DataOutputStream dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
                 dataOutputStream.writeUTF(messageFromServer);
+                dataOutputStream.writeUTF(status);
+                dataOutputStream.writeUTF(balance);
 
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

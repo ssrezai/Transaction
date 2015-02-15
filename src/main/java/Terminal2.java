@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by DOTIN SCHOOL 3 on 2/14/2015.
+ *
  * @author Samira Rezaei
  */
 public class Terminal2 {
@@ -33,23 +34,30 @@ public class Terminal2 {
 
         //list of deposits
         ArrayList<Transaction> transactionsList = terminalXmlHandler.getTransactionsList();
+        //list of outputs..
+        ArrayList<String> statusList = new ArrayList<String>();
+        ArrayList<String> balanceList = new ArrayList<String>();
 
         Socket clientSocket = new Socket(InetAddress.getLocalHost(), 8080);
         try {
             int numOfTransaction = transactionsList.size();
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-            DataInputStream dataInputStream= new DataInputStream(clientSocket.getInputStream());
+            DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
             dataOutputStream.writeUTF(String.valueOf(numOfTransaction));
             logger.info("client sent #of total transactions..");
 
             /////send all of transaction in this loop
-            for (Transaction aTransactionsList : transactionsList) {
+            for (int counter = 0; counter < transactionsList.size(); counter++) {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                logger.info("sending request for transaction ID:" + aTransactionsList.getId());
+                logger.info("sending request for transaction ID:" + transactionsList.get(counter).getId());
                 ////////send one transaction to server for checking...///////
-                objectOutputStream.writeObject(aTransactionsList);
-                logger.info("successfully sent request for transaction ID:" + aTransactionsList.getId());
+                objectOutputStream.writeObject(transactionsList.get(counter));
+                logger.info("successfully sent request for transaction ID:" + transactionsList.get(counter).getId());
                 String str = dataInputStream.readUTF();
+                String status = dataInputStream.readUTF();
+                String balance = dataInputStream.readUTF();
+                statusList.add(counter, status);
+                balanceList.add(counter, balance);
                 System.out.println(str);
                 logger.info(str);
             }
@@ -58,10 +66,9 @@ public class Terminal2 {
             System.err.println("Client Error: " + e.getMessage());
         }
 
-
+        WriteXML.writeTransactionResult(transactionsList, statusList, balanceList, terminalXmlHandler.getTerminalName());
         System.out.print(InetAddress.getLocalHost());
-
-
+        clientSocket.close();
         //System.exit(0);
     }
 
